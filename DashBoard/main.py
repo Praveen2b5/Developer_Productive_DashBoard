@@ -3,8 +3,10 @@ from github_api import (
     get_user_repos,
     get_user_commits,
     get_user_pull_requests,
+    get_repo_contributors,
     save_to_json
 )
+from tabulate import tabulate
 
 
 def main():
@@ -18,41 +20,72 @@ def main():
             print("No public repositories found.")
             return
 
-        all_user_prs = []
+        all_developer_data = []
 
-        print(f"\nRepositories owned by {username}:")
         for repo in repos:
             repo_name = repo['name']
-            print(f"\n🔹 {repo_name} (⭐ {repo['stargazers_count']})")
+            repo_owner = repo['owner']['login']
+            print(f"Repo: {repo_name}")
 
-            # Commits
-            commits = get_user_commits(username, repo_name, username)
-            print(f" Commits by {username}: {len(commits)}")
+            contributors = get_repo_contributors(repo_owner, repo_name)
+            if not contributors:
+                print("   ⚠️ No contributors found.")
+                continue
 
-            # Filtered PRs by user
-            user_prs = get_user_pull_requests(username, repo_name, username)
-            print(f"  📥 Pull Requests by {username}: {len(user_prs)}")
+            for contributor in contributors:
+                dev_login = contributor['login']
+                print(f"   🔹 Developer: {dev_login}")
 
-            for pr in user_prs[:3]:  # Preview
-                print(f"    - PR #{pr['number']}: {pr['title']} [{pr['state']}]")
+                commits = get_user_commits(repo_owner, repo_name, dev_login)
+                prs = get_user_pull_requests(repo_owner, repo_name, dev_login)
 
-            # Add to collection for export
-            all_user_prs.extend([
-                {
+                dev_data = {
+                    "developer": dev_login,
                     "repo": repo_name,
-                    "number": pr["number"],
-                    "title": pr["title"],
-                    "state": pr["state"],
-                    "created_at": pr["created_at"],
-                    "url": pr["html_url"]
-                } for pr in user_prs
+                    "commit_count": len(commits),
+                    "pull_requests": [{
+                        "number": pr["number"],
+                        "title": pr["title"],
+                        "state": pr["state"],
+                        "created_at": pr["created_at"],
+                        "url": pr["html_url"]
+                    } for pr in prs]
+                }
+
+                all_developer_data.append(dev_data)
+
+        save_to_json(all_developer_data)
+        print_developer_table(all_developer_data)
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+def print_developer_table(developer_data):
+    table = []
+    for dev in developer_data:
+        for pr in dev["pull_requests"]:
+            table.append([
+                dev["developer"],
+                dev["repo"],
+                dev["commit_count"],
+                pr["number"],
+                pr["title"],
+                pr["state"],
+                pr["created_at"],
+                pr["url"]
             ])
 
-        # Save to JSON file
-        save_to_json(all_user_prs)
+    headers = [
+        "Developer",
+        "Repository",
+        "Commits",
+        "PR #",
+        "PR Title",
+        "PR State",
+        "Created At",
+        "PR URL"
+    ]
+    print(tabulate(table, headers=headers, tablefmt="grid"))
 
-    except Exception as e:
-        print(f"Error: {e}")
 
 
 if __name__ == "__main__":
