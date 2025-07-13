@@ -1,0 +1,30 @@
+[
+    {
+        "developer": "Praveen2b5",
+        "repo": "Developer_Productive_DashBoard",
+        "commit_count": 7,
+        "pull_requests": [
+            {
+                "number": 1,
+                "title": "Added basic Version of code for Dashboard Metrics",
+                "state": "closed",
+                "created_at": "2025-07-09T10:47:25Z",
+                "url": "https://github.com/Praveen2b5/Developer_Productive_DashBoard/pull/1"
+            }
+        ]
+    },
+    {
+        "developer": "Amarvarma29",
+        "repo": "Developer_Productive_DashBoard",
+        "commit_count": 1,
+        "pull_requests": [
+            {
+                "number": 2,
+                "title": "Created Test.ini",
+                "state": "closed",
+                "created_at": "2025-07-09T12:47:42Z",
+                "url": "https://github.com/Praveen2b5/Developer_Productive_DashBoard/pull/2"
+            }
+        ]
+    }
+]
