@@ -29,7 +29,7 @@ class JiraSprintIssuesFetcher:
 if __name__ == "__main__":
     # Replace these with actual credentials and values
     BASE_URL = os.getenv("BASE_URL")
-    SPRINT_ID = ""
+    SPRINT_ID = int(input())
     EMAIL = os.getenv("Email_id")
     API_TOKEN = os.getenv("API_TOKEN")
 
