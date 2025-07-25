@@ -58,8 +58,3 @@ def get_repo_contributors(owner, repo):
     url = f"{API_BASE_URL}/repos/{owner}/{repo}/contributors"
     return make_request(url)
 
-
-def save_to_json(data, filename="all_developers_activity.json"):
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4)
-    print(f"✅ Saved data to {filename}")
